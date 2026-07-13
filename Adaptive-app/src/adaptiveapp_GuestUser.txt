@@ -1,0 +1,159 @@
+{
+  "user": {
+    "name": "Guest",
+    "lastName": "User",
+    "genre": "Other",
+    "age": 0,
+    "city": "Unknown",
+    "country": "Spain"
+  },
+  "environment": {
+    "timeZone": "Europe/Madrid",
+    "countryCode": "ES",
+    "date": "2026-06-06",
+    "day": "Saturday",
+    "time": "20:43:13"
+  },
+  "platform": {
+    "os": "Windows 11 Home",
+    "arch": "64 bits (Intel/AMD)",
+    "numCPUs": 16,
+    "ramSizeGB": "15.67",
+    "defaultLang": "es"
+  },
+  "app": {
+    "name": "adaptiveapp",
+    "type": "Catálogo de productos",
+    "windowSize": {
+      "width": 1400,
+      "height": 780
+    },
+    "currentAdaptations": {
+      "theme": "dark",
+      "language": "es",
+      "display": "list",
+      "font_size": "small",
+      "information": "show",
+      "category": "sports",
+      "menu_type": "dropdown",
+      "images": "images",
+      "cursor": "default"
+    },
+    "availableAdaptations": {
+      "display": [
+        "list",
+        "grid2",
+        "grid3",
+        "grid4",
+        "grid5"
+      ],
+      "theme": [
+        "light",
+        "dark"
+      ],
+      "information": [
+        "show",
+        "partial",
+        "hide"
+      ],
+      "font_size": [
+        "small",
+        "default",
+        "medium",
+        "big"
+      ],
+      "menu_type": [
+        "line",
+        "dropdown"
+      ],
+      "images": [
+        "images",
+        "no_images"
+      ],
+      "cursor": [
+        "default",
+        "large",
+        "high-contrast"
+      ]
+    },
+    "navigation": [
+      {
+        "path": "catalog.html",
+        "entryTime": "2026-06-06T20:41:31+02:00",
+        "durationSeconds": 26,
+        "numClicks": 6,
+        "userEmotion": "disgust",
+        "scroll": {
+          "actionsUP": 0,
+          "actionsDOWN": 1
+        }
+      },
+      {
+        "path": "product.html?articleId=kiprun_kd_500_3",
+        "entryTime": "2026-06-06T20:41:57+02:00",
+        "durationSeconds": 11,
+        "numClicks": 7,
+        "userEmotion": "neutral",
+        "scroll": {
+          "actionsUP": 0,
+          "actionsDOWN": 0
+        }
+      },
+      {
+        "path": "basket.html",
+        "entryTime": "2026-06-06T20:42:08+02:00",
+        "durationSeconds": 6,
+        "numClicks": 4,
+        "userEmotion": "disgust",
+        "scroll": {
+          "actionsUP": 0,
+          "actionsDOWN": 0
+        }
+      },
+      {
+        "path": "order.html?action=create",
+        "entryTime": "2026-06-06T20:42:14+02:00",
+        "durationSeconds": 1,
+        "numClicks": 1,
+        "userEmotion": "disgust",
+        "scroll": {
+          "actionsUP": 0,
+          "actionsDOWN": 0
+        }
+      },
+      {
+        "path": "catalog.html",
+        "entryTime": "2026-06-06T20:42:16+02:00",
+        "durationSeconds": 34,
+        "numClicks": 10,
+        "userEmotion": "angry",
+        "scroll": {
+          "actionsUP": 2,
+          "actionsDOWN": 2
+        }
+      },
+      {
+        "path": "product.html?articleId=trail_xt8",
+        "entryTime": "2026-06-06T20:42:50+02:00",
+        "durationSeconds": 16,
+        "numClicks": 3,
+        "userEmotion": "angry",
+        "scroll": {
+          "actionsUP": 0,
+          "actionsDOWN": 0
+        }
+      },
+      {
+        "path": "catalog.html",
+        "entryTime": "2026-06-06T20:43:07+02:00",
+        "durationSeconds": 2,
+        "numClicks": 1,
+        "userEmotion": "happy",
+        "scroll": {
+          "actionsUP": 0,
+          "actionsDOWN": 0
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Order - AdaptiveSports</title>
+		<!-- Jquery -->
+		<link href="./jquery/jquery-ui.css" rel="stylesheet">
+		<script src="./jquery\external\jquery\jquery.js"></script>
+		<script src="./jquery/jquery-ui.js"></script>
+		<!-- Socket IO -->
+		<script src="./js/socket.io.min.js"></script>
+		<!-- Styles -->
+		<link href="./style/structure.css" rel="stylesheet">
+		<link href="./style/lightTheme.css" rel="stylesheet">
+		<link href="./style/darkTheme.css" rel="stylesheet">
+		<link href="./style/order.css" rel="stylesheet">
+		<!-- Core JS -->
+		<script src="./js/check.js"></script>
+		<script src="./js/translator.js"></script>
+		<script src="./js/mutations.js"></script>
+		<!-- <script src="./js/communication.js"></script> -->
+		<!-- Translations -->
+		<script src="./js/translations.js"></script>
+		<!-- Own data and js -->
+		<script src="./data/articlesData.js"></script>
+		<script src="./js/favController.js"></script>
+		<script src="./js/profile/ProfileModel.js"></script>
+		<script src="./js/order/OrderModel.js"></script>
+		<script src="./js/order/OrderList.js"></script>
+
+		<!-- MouseTracker -->
+		<!-- <script src="./js/mouseTracker.js"></script> -->
+	</head>
+	<body lang="es">
+	<!--<div id="adaptation-center"></div>-->
+    </div>
+		<div class="full-container">
+			<!-- Header -->
+			<header class="header">
+				<div class="logo">
+					<a id="logo" href="catalog.html">
+						<img id="headerLogo" src="./img/icon.png"></img>
+					</a>
+				</div>
+				<div class="search-bar">
+				  <input id="search_input" name="search_q" type="text" placeholder="Search..." />
+				</div>
+				
+		
+		
+				<div class="user-buttons">
+				  <div class="user-button">
+					<span class="icon">
+						<a href="./profile.html">
+							👤
+						</a>
+					</span>
+					<span class="subtext">
+						<a href="./profile.html" style="color: unset;">
+							Perfil
+						</a>
+					</span>
+				  </div>
+				  <div class="user-button">
+					<span class="icon"><a href="./favourites.html">❤️ <span id="favorites_counter" class="counter">0</span></a></span>
+					<span class="subtext"><a href="./favourites.html" style="color: unset;">Favoritos</a></span>
+				  </div>
+				  <div class="user-button">
+					<span class="icon"><a href="./basket.html">🛒 <span id="basket_counter" class="counter">0</span></a></span>
+					<span class="subtext"><a href="./basket.html"  style="color: unset;"> Carrito</a> </span>
+				  </div>
+				</div>
+			  </header>
+		
+			  <script>
+				document
+				  .getElementById("search_input")
+				  .addEventListener("click", function () {
+					if (
+					  !window.location.pathname.includes("catalog") &&
+					  !window.location.pathname.includes("favourites")
+					) {
+					  window.location.href = "catalog.html";
+					}
+				  });
+			  </script>
+			
+			<!-- Main content -->
+			<a class="goBack" href="catalog.html">
+				<span>&lt;</span>
+				<span textId="keepBuying:1c"></span>
+			</a>
+			<div class="orderList">
+				<div id="basketDetails">
+				</div>
+			</div>
+		<!-- HTML load end scripts -->
+		<script src="./js/controls.js"></script>
+		<script src="./js/pageNavigation.js"></script>
+		<script src="./js/cartModel.js"></script>
+		<script src="./js/order/order.js"></script>
+		<script src="./js/head.js"></script>
+		<script src="./js/pageActivityTracker.js"></script> 
+	</body>
+</html>

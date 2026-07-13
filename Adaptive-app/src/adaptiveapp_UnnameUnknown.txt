@@ -1,0 +1,81 @@
+{
+  "user": {
+    "name": "Unname",
+    "lastName": "Unknown",
+    "genre": "Male",
+    "age": 32,
+    "city": "Valencia",
+    "country": "Spain"
+  },
+  "environment": {
+    "timeZone": "Europe/Madrid",
+    "countryCode": "ES",
+    "date": "2026-06-06",
+    "day": "Saturday",
+    "time": "21:04:43"
+  },
+  "platform": {
+    "os": "Windows 11 Home",
+    "arch": "64 bits (Intel/AMD)",
+    "numCPUs": 16,
+    "ramSizeGB": "15.67",
+    "defaultLang": "es"
+  },
+  "app": {
+    "name": "adaptiveapp",
+    "type": "Catálogo de productos",
+    "windowSize": {
+      "width": 1400,
+      "height": 780
+    },
+    "currentAdaptations": {
+      "theme": "dark",
+      "language": "es",
+      "display": "list",
+      "font_size": "small",
+      "information": "show",
+      "category": "sports",
+      "menu_type": "dropdown",
+      "images": "images",
+      "cursor": "default"
+    },
+    "availableAdaptations": {
+      "display": [
+        "list",
+        "grid2",
+        "grid3",
+        "grid4",
+        "grid5"
+      ],
+      "theme": [
+        "light",
+        "dark"
+      ],
+      "information": [
+        "show",
+        "partial",
+        "hide"
+      ],
+      "font_size": [
+        "small",
+        "default",
+        "medium",
+        "big"
+      ],
+      "menu_type": [
+        "line",
+        "dropdown"
+      ],
+      "images": [
+        "images",
+        "no_images"
+      ],
+      "cursor": [
+        "default",
+        "large",
+        "high-contrast"
+      ]
+    },
+    "navigation": []
+  }
+}

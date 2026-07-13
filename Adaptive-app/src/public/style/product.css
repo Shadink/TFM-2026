@@ -1,0 +1,245 @@
+.keep-buying {
+    grid-column: 3;
+    grid-row: 2;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+    margin-top: 15px;
+}
+.keep-buying:hover {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  transition: text-decoration 0.3s ease;
+}
+.product {
+    grid-column: 3/7;
+    grid-row: 3;
+    width: 90%;
+}
+
+.product > .introSection {
+    display: grid;
+    grid-template-columns: 7% 1.2% 36.8% 5% 50%;
+    margin-left: -9%;
+}
+
+.introSection > .leftThumnails { grid-column: 1; }
+.introSection > .bigPhoto { grid-column: 3; }
+.introSection > .importantData { grid-column: 5; }
+
+
+.introSection > .bigPhoto > img{ width: 100%; }
+
+
+.introSection .importantData > *:not(:first-child) {
+    margin-top: 12px;
+}
+
+.product .importantData .bottomSection {
+    margin-top: 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+.product .bottomSection .shipmentAndStock{
+    width: 48%;
+}
+
+.product .addToBucket {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+.product .addToBucket input[type=number] {
+    width: 98%;
+    height: 28px;
+    font-size: large;
+    display: block;
+    margin-top: 6px;
+}
+
+.product .importantData .title {
+    display: grid;
+    grid-template-columns: 95% 5%;
+}
+
+.product .title > .heart {
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
+.product .choice {
+    border: 1px solid;
+    padding: 3px 4px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.product .importantData .choice:not(:last-child) {
+    margin-right: 6px;
+}
+
+/* Texts */
+/* Default size por important data */
+.product #articleTitle {
+    font-size: x-large;
+    line-height: normal;
+}
+
+.product .score,
+.product .variation .choice,
+.product .addToBucket {
+    font-size: medium;
+}
+.product .variation .choice {
+    line-height: 200%;
+    margin-right: 4px;
+}
+
+.product-card {
+	display: flex;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 16px;
+	margin: 16px 0;
+}
+
+.product-left {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.product-right {
+	flex: 1;
+	padding-left: 16px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.product-images .bigPhoto img {
+	width: 100%;
+	max-width: 400px;
+	border-radius: 8px;
+}
+
+.thumbnails-container {
+	margin-top: 16px;
+	display: flex;
+	justify-content: center;
+}
+
+.thumbnails img {
+	width: 60px;
+	height: 60px;
+	margin: 0 4px;
+	cursor: pointer;
+	border: 1px solid var(--thumbnail-border-color);
+	border-radius: 4px;
+	transition: transform 0.3s ease;
+}
+
+.thumbnails img:hover {
+	transform: scale(1.1);
+}
+
+.product-details .title {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+  font-size: calc(var(--base-font-size) + 5px);
+	font-weight: bold;
+  margin-top: 8px;
+}
+
+.product-details .price {
+	font-size: calc(var(--base-font-size) + 6px);
+  color: var(--price-color);
+	margin-top: 8px;
+}
+
+.star_rating {
+	display: flex;
+	align-items: center;
+	margin-top: 8px;
+}
+
+.star_rating .score {
+	margin-left: 8px;
+  font-size: var(--base-font-size);
+	color: var(--score-color);
+}
+
+.bottom-section {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.add-to-cart {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.add-to-cart label {
+  font-size: var(--base-font-size);
+}
+
+.add-to-cart input {
+	width: 100px;
+	padding: 8px;
+	border: 1px solid var(--input-border-color);
+	border-radius: 4px;
+  font-size: var(--base-font-size);
+}
+
+.add-to-cart button {
+	padding: 12px 24px;
+  font-size: var(--base-font-size);
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.add-to-cart button.positive {
+	background-color: var(--positive-bg-color);
+	color: var(--positive-text-color);
+}
+
+.add-to-cart button.positive:hover {
+	background-color: var(--positive-hover-bg-color);
+}
+
+.shipment-and-stock {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.shipment-and-stock .positive {
+	color: var(--positive-color);
+}
+
+.shipment-and-stock .negative {
+	color: var(--negative-color);
+}
+
+.product-description {
+	margin-top: 32px;
+}
+
+.product-description h4 {
+	font-size: calc(var(--base-font-size) + 4px);
+}
+
+.product-description .description-section {
+	font-size: var(--base-font-size);
+}
+
+
