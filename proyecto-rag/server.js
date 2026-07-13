@@ -30,13 +30,13 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
     table = await dbConn.createTable(NOMBRE_TABLA, [
         {
             id: "init",
-            display: "init", theme: "init", information: "init",
-            font_size: "init", menu_type: "init", images: "init",
+            theme: "init", language: "init", display: "init", font_size: "init", information: "init",
+            category: "init", menu_type: "init", images: "init", cursor: "init",
             nombre: "init", edad: "init", ubicacion: "init",
             fecha: "init", hora: "init", so: "init", ram: "init", lang: "init",
             clicks: "init", scroll_up: "init", scroll_down: "init", path: "init",
             window_height: "init", window_width: "init",
-            adaptacion_aplicada: "init",
+            accion: "init",
             embedding: new Array(DIM_EMBEDDING).fill(0)
         }
     ]);
@@ -50,14 +50,19 @@ async function embed(text){
     return Array.from(output.data);
 }
 
-function construirTexto(c) {
-    return `
-        acción:${c.accion}
-        display:${c.display} theme:${c.theme} information:${c.information}
-        font_size:${c.font_size} menu_type:${c.menu_type} images:${c.images}
+function construirTexto(c, contexto = true) {
+    let texto = `
+        theme:${c.theme} language:${c.language} display:${c.display} font_size:${c.font_size} information:${c.information}
+        category:${c.category} menu_type:${c.menu_type} images:${c.images} cursor:${c.cursor}
         nombre:${c.nombre} edad:${c.edad} ubicacion:${c.ubicacion}
         fecha:${c.fecha} hora:${c.hora} so:${c.so} ram:${c.ram} lang:${c.lang}
-    `.trim();
+    `;
+
+    if (contexto) {
+        texto = `acción:${c.accion}\n` + texto;
+    }
+
+    return texto.trim();
 }
 
 app.use(cors({ origin: "*" }))
@@ -85,10 +90,53 @@ app.post("/adapt", async (req, res) => {
 
     console.log("BODY:");
     console.log(req.body);
+
     const {
-        display, theme, information, font_size, menu_type, images,
+        theme, language, display, font_size, information, category, menu_type, images, cursor,
         nombre, edad, ubicacion, fecha, hora, so, ram, lang
     } = req.body;
+
+    const contextoActual = {
+        theme, language, display, font_size, information, category, menu_type, images, cursor,
+        nombre, edad, ubicacion, fecha, hora, so, ram, lang
+    };
+
+    const textoConsulta = construirTexto(contextoActual, false);
+    const embedding = await embed(textoConsulta);
+
+    let casosSimilares = [];
+    try {
+        const resultados = await table
+            .search(embedding)
+            .column("embedding")
+            .limit(3)
+            .toArray();
+
+        casosSimilares = resultados
+            .map(r => {
+                try {
+                    return {
+                        contexto: {
+                            edad: r.edad, ubicacion: r.ubicacion, so: r.so, lang: r.lang
+                        },
+                        adaptaciones: JSON.parse(r.accion),
+                        distancia: r._distance
+                    };
+                } catch {
+                    return null;
+                }
+            })
+            .filter(Boolean);
+    } catch (err) {
+        console.warn("No se pudieron recuperar casos similares:", err.message);
+    }
+
+    const ejemplosTexto = casosSimilares.length > 0
+        ? casosSimilares.map((c, i) =>
+            `Caso ${i + 1} (usuario similar: edad ${c.contexto.edad}, ubicación ${c.contexto.ubicacion}, SO ${c.contexto.so}, idioma ${c.contexto.lang}):
+            Adaptaciones aplicadas: ${JSON.stringify(c.adaptaciones)}`
+          ).join("\n\n")
+        : "No hay casos previos similares registrados.";
 
     const prompt = `Datos del usuario \n
                     =============== \n
@@ -103,57 +151,78 @@ app.post("/adapt", async (req, res) => {
                      \n
                     Interfaz actual \n
                     =============== \n
-                    Display: ${display} \n
                     Theme: ${theme} \n
-                    Information: ${information} \n
+                    Language: ${language} \n
+                    Display: ${display} \n
                     Font Size: ${font_size} \n
+                    Information: ${information} \n
+                    Category: ${category} \n
                     Menu Type: ${menu_type} \n
                     Images: ${images} \n
+                    Cursor: ${cursor} \n
+                     \n
+                    Casos similares previos \n
+                    ======================== \n
+                    ${ejemplosTexto} \n
                      \n
                     Adaptaciones disponibles \n
                     ======================== \n
-                    "display": "list", "grid2", "grid3", "grid4", "grid5"\n
                     "theme": "light", "dark", "contrast"\n
-                    "information": "show", "partial", "hide"\n
+                    "language": "en", "es"\n
+                    "display": "list", "grid2", "grid3", "grid4", "grid5"\n
                     "font_size": "small", "default", "medium", "big"\n
+                    "information": "show", "partial", "hide"\n
+                    "category": "sports", "other"\n
                     "menu_type": "line", "dropdown"\n
                     "images": "images", "no_images"\n
+                    "cursor": "default", "large", "high-contrast"
                      \n
-
-                    Siendo lo anterior a ":" area, y lo posterior, valor
+                    Siendo lo anterior a ":" area, y lo posterior, valor;
                     Teniendo en cuenta únicamente la información anterior,
                     elige varias adaptaciones que aplicar.
+                    esponde EXACTAMENTE con este formato, en dos partes:
 
-                    Tu respuesta debe ser exclusivamente un objeto JSON.
-
-                    No escribas ninguna explicación.
-
-                    No escribas introducciones.
-
-                    No utilices Markdown.
+                    1. Un array JSON con las adaptaciones, sin explicación, sin introducción, sin Markdown. SÓLAMENTE si ves necesario un cambio.
+                    2. A continuación, en una nueva línea que empiece exactamente con "JUSTIFICACION:", tu justificación en texto libre.
 
                     Ejemplo de respuesta:
-
                     [
                         {"area":"theme","valor":"dark"},
                         {"area":"display","valor":"grid3"}
                     ]
+                    JUSTIFICACION: Se aplica tema oscuro porque es de noche y el usuario...
                     `;
 
-    let accion, valor;
     let adaptaciones = [];
+    let justificacion = "";
+    console.log("PROMPT:");
+    console.log(prompt);
+
     try {
         const response = await openai.chat.completions.create({
             model: 'llama-mini',
             messages: [{ role: 'user', content: prompt }],
         });
         const raw = response.choices[0].message.content.trim();
-        const cleaned = raw.replace(/^```json\s*|```$/g, "").trim();
+        console.log("Respuesta de llama-mini:", raw);
+
+        // Separa el bloque JSON del bloque de justificación
+        const marcador = raw.indexOf("JUSTIFICACION:");
+        const bloqueJson = marcador !== -1 ? raw.slice(0, marcador) : raw;
+        justificacion = marcador !== -1 ? raw.slice(marcador + "JUSTIFICACION:".length).trim() : "";
+
+        let cleaned = bloqueJson.replace(/^```json\s*|```$/g, "").trim();
+
+        // Por si aun así viene algo de texto antes/después del array
+        const inicio = cleaned.indexOf("[");
+        const fin = cleaned.lastIndexOf("]");
+        if (inicio !== -1 && fin !== -1 && fin > inicio) {
+            cleaned = cleaned.slice(inicio, fin + 1);
+        }
+
         const parsed = JSON.parse(cleaned);
-        console.log("Respuesta de llama-mini: {}", raw);
 
         adaptaciones = Array.isArray(parsed) ? parsed : [parsed];
-
         adaptaciones = adaptaciones.filter(a => a && a.area && a.valor);
         if (adaptaciones.length === 0) throw new Error("Array vacío o inválido");
     } catch (err) {
@@ -168,21 +237,14 @@ app.post("/adapt", async (req, res) => {
         font_size: font_size ?? "", menu_type: menu_type ?? "", images: images ?? "",
         nombre: nombre ?? "", edad: edad ?? "", ubicacion: ubicacion ?? "",
         fecha: fecha ?? "", hora: hora ?? "", so: so ?? "", ram: ram ?? "", lang: lang ?? "",
-        adaptacion_aplicada: JSON.stringify(adaptaciones)
+        accion: JSON.stringify(adaptaciones)
     };
 
-    const textoCombinado = construirTexto(registro);
-    const embedding = await embed(textoCombinado);
-    await table.add([{ ...registro, embedding }]);
+    const textoCombinado = construirTexto(registro, true);
+    const embeddingRegistro = await embed(textoCombinado);
+    await table.add([{ ...registro, embedding: embeddingRegistro }]);
 
-    const results = await table
-        .search(embedding)
-        .column("embedding")
-        .limit(1)
-        .toArray();
-
-    console.log("Resultado: ", results);
-    res.json({ adaptaciones, tabla: results });
+    res.json({ adaptaciones, casosSimilares });
 });
 
 app.listen(3000, () => {
