@@ -281,7 +281,7 @@ app.post("/adapt", async (req, res) => {
     const embeddingRegistro = await embed(textoCombinado);
     await table.add([{ ...registro, embedding: embeddingRegistro }]);
 
-    res.json({ adaptaciones, casosSimilares });
+    res.json({ adaptaciones, justificacion, casosSimilares });
 });
 
 const PORT = process.env.PORT || 3000;
