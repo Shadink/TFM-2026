@@ -1,16 +1,18 @@
 import express from "express"
 import * as lancedb from "@lancedb/lancedb"
 import { pipeline } from '@xenova/transformers';
-import OpenAI from 'openai'
+//import OpenAI from 'openai'
 import dotenv from "dotenv";
 import cors from "cors"
 import { randomUUID } from "crypto";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 dotenv.config();
 
-const openai = new OpenAI({
+/*const openai = new OpenAI({
     apiKey: 'sk-Q3T-ggr2ZLVOiWPrLaqOVQ',
     baseURL: 'https://api.poligpt.upv.es',
-})
+})*/
 const app = express()
 app.use(express.json())
 
@@ -44,7 +46,9 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
 }
 
 const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-const generator = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-77M');
+//const generator = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-77M');
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 async function embed(text){
     const output = await extractor(text, { pooling: 'mean', normalize: true });
@@ -199,13 +203,13 @@ app.post("/adapt", async (req, res) => {
     console.log("PROMPT:");
     console.log(prompt);
 
-    try {
+    /*try {
         /*const response = await openai.chat.completions.create({
             model: 'llama-mini',
             messages: [{ role: 'user', content: prompt }],
         });
         const raw = response.choices[0].message.content.trim();
-        console.log("Respuesta de llama-mini:", raw);*/
+        console.log("Respuesta de llama-mini:", raw);
 
         const output = await generator(prompt, { max_new_tokens: 300 });
         const raw = output[0].generated_text.trim();
@@ -233,7 +237,35 @@ app.post("/adapt", async (req, res) => {
     } catch (err) {
         console.error("Error al llamar/parsear respuesta de llama:", err);
         return res.status(502).json({ error: "No se pudo obtener una adaptación válida del modelo" });
+    }*/
+    try {
+        const result = await model.generateContent(prompt);
+        const raw = result.response.text().trim();
+        console.log("Respuesta de Gemini:", raw);
+
+        // Separa el bloque JSON del bloque de justificación
+        const marcador = raw.indexOf("JUSTIFICACION:");
+        const bloqueJson = marcador !== -1 ? raw.slice(0, marcador) : raw;
+        justificacion = marcador !== -1 ? raw.slice(marcador + "JUSTIFICACION:".length).trim() : "";
+
+        let cleaned = bloqueJson.replace(/^```json\s*|```$/g, "").trim();
+
+        const inicio = cleaned.indexOf("[");
+        const fin = cleaned.lastIndexOf("]");
+        if (inicio !== -1 && fin !== -1 && fin > inicio) {
+            cleaned = cleaned.slice(inicio, fin + 1);
+        }
+
+        const parsed = JSON.parse(cleaned);
+
+        adaptaciones = Array.isArray(parsed) ? parsed : [parsed];
+        adaptaciones = adaptaciones.filter(a => a && a.area && a.valor);
+        if (adaptaciones.length === 0) throw new Error("Array vacío o inválido");
+    } catch (err) {
+        console.error("Error al llamar/parsear respuesta de Gemini:", err);
+        return res.status(502).json({ error: "No se pudo obtener una adaptación válida del modelo" });
     }
+
 
     console.log("Guardando adaptación(es)");
     const registro = {
