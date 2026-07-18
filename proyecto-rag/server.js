@@ -48,7 +48,7 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
 const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
 //const generator = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-77M');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
 async function embed(text){
     const output = await extractor(text, { pooling: 'mean', normalize: true });
