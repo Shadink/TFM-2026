@@ -44,6 +44,7 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
 }
 
 const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+const generator = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-248M');
 
 async function embed(text){
     const output = await extractor(text, { pooling: 'mean', normalize: true });
@@ -199,12 +200,16 @@ app.post("/adapt", async (req, res) => {
     console.log(prompt);
 
     try {
-        const response = await openai.chat.completions.create({
+        /*const response = await openai.chat.completions.create({
             model: 'llama-mini',
             messages: [{ role: 'user', content: prompt }],
         });
         const raw = response.choices[0].message.content.trim();
-        console.log("Respuesta de llama-mini:", raw);
+        console.log("Respuesta de llama-mini:", raw);*/
+
+        const output = await generator(prompt, { max_new_tokens: 300 });
+        const raw = output[0].generated_text.trim();
+        console.log("Respuesta de FLAN: {}", raw);
 
         // Separa el bloque JSON del bloque de justificación
         const marcador = raw.indexOf("JUSTIFICACION:");
