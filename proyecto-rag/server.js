@@ -44,7 +44,7 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
 }
 
 const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-const generator = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-248M');
+const generator = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-77M');
 
 async function embed(text){
     const output = await extractor(text, { pooling: 'mean', normalize: true });
