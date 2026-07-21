@@ -7,6 +7,12 @@ import cors from "cors"
 import { randomUUID } from "crypto";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+const ADAPTACIONES_FALLBACK = [
+    { area: "theme", valor: "light" },
+    { area: "font_size", valor: "default" }
+];
+const JUSTIFICACION_FALLBACK = "No se pudo consultar el modelo de IA en este momento, se han aplicado las adaptaciones estándar.";
+
 dotenv.config();
 
 /*const openai = new OpenAI({
@@ -263,7 +269,9 @@ app.post("/adapt", async (req, res) => {
         if (adaptaciones.length === 0) throw new Error("Array vacío o inválido");
     } catch (err) {
         console.error("Error al llamar/parsear respuesta de Gemini:", err);
-        return res.status(502).json({ error: "No se pudo obtener una adaptación válida del modelo" });
+        console.warn("Aplicando adaptaciones estándar de fallback");
+        adaptaciones = ADAPTACIONES_FALLBACK;
+        justificacion = JUSTIFICACION_FALLBACK;
     }
 
 
