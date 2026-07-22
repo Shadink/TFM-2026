@@ -275,7 +275,7 @@ app.post("/adapt", async (req, res) => {
     }
 
 
-    console.log("Guardando adaptación(es)");
+    /*console.log("Guardando adaptación(es)");
     const registro = {
         id: randomUUID(),
         display: display ?? "", theme: theme ?? "", information: information ?? "",
@@ -289,7 +289,39 @@ app.post("/adapt", async (req, res) => {
     const embeddingRegistro = await embed(textoCombinado);
     await table.add([{ ...registro, embedding: embeddingRegistro }]);
 
-    res.json({ adaptaciones, justificacion, casosSimilares });
+    res.json({ adaptaciones, justificacion, casosSimilares });*/
+    res.json({ adaptaciones, justificacion, casosSimilares, contexto: contextoActual });
+});
+
+app.post("/confirmar", async (req, res) => {
+    const { contexto, adaptaciones } = req.body;
+
+    if (!contexto || !Array.isArray(adaptaciones) || adaptaciones.length === 0) {
+        return res.status(400).json({ error: "Faltan datos: contexto o adaptaciones" });
+    }
+
+    console.log("Guardando adaptación confirmada:");
+    console.log(adaptaciones);
+
+    const registro = {
+        id: randomUUID(),
+        display: contexto.display ?? "", theme: contexto.theme ?? "", information: contexto.information ?? "",
+        font_size: contexto.font_size ?? "", menu_type: contexto.menu_type ?? "", images: contexto.images ?? "",
+        nombre: contexto.nombre ?? "", edad: contexto.edad ?? "", ubicacion: contexto.ubicacion ?? "",
+        fecha: contexto.fecha ?? "", hora: contexto.hora ?? "", so: contexto.so ?? "",
+        ram: contexto.ram ?? "", lang: contexto.lang ?? "",
+        accion: JSON.stringify(adaptaciones)
+    };
+
+    try {
+        const textoCombinado = construirTexto(registro, true);
+        const embeddingRegistro = await embed(textoCombinado);
+        await table.add([{ ...registro, embedding: embeddingRegistro }]);
+        res.json({ ok: true });
+    } catch (err) {
+        console.error("Error guardando en RAG:", err);
+        res.status(500).json({ ok: false, error: err.message });
+    }
 });
 
 const PORT = process.env.PORT || 3000;
