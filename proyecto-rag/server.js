@@ -24,17 +24,17 @@ app.use(express.json())
 
 // ===== GESTIÓN DE LA TABLA RAG =====
 const dbConn = await lancedb.connect("./rag-db");
-const NOMBRE_TABLA = "adaptaciones";
+const NOMBRE_TABLA = "adaptations";
 const DIM_EMBEDDING = 384; // all-MiniLM-L6-v2
 
 const tablasExistentes = await dbConn.tableNames();
 let table;
 
 if (tablasExistentes.includes(NOMBRE_TABLA)) {
-    console.log(`Tabla "${NOMBRE_TABLA}" ya existe. Abriendo...`);
+    console.log(`Table "${NOMBRE_TABLA}" exists. Opening...`);
     table = await dbConn.openTable(NOMBRE_TABLA);
 } else {
-    console.log(`Tabla "${NOMBRE_TABLA}" no existe. Creando...`);
+    console.log(`Table "${NOMBRE_TABLA}" doesn't exist. Creating...`);
     table = await dbConn.createTable(NOMBRE_TABLA, [
         {
             id: "init",
@@ -149,18 +149,18 @@ app.post("/adapt", async (req, res) => {
           ).join("\n\n")
         : "No hay casos previos similares registrados.";
 
-    const prompt = `Datos del usuario \n
+    const prompt = `User data \n
                     =============== \n
-                    Nombre: ${nombre} \n
-                    Edad: ${edad} \n
-                    Ubicación: ${ubicacion} \n
-                    Fecha: ${fecha} \n
-                    Hora: ${hora} \n
-                    Sistema Operativo: ${so} \n
+                    Name: ${nombre} \n
+                    Age: ${edad} \n
+                    Location: ${ubicacion} \n
+                    Date: ${fecha} \n
+                    Time: ${hora} \n
+                    OS: ${so} \n
                     RAM: ${ram}MB \n
-                    Idioma: ${lang} \n
+                    Language: ${lang} \n
                      \n
-                    Interfaz actual \n
+                    Current Interface \n
                     =============== \n
                     Theme: ${theme} \n
                     Language: ${language} \n
@@ -172,11 +172,11 @@ app.post("/adapt", async (req, res) => {
                     Images: ${images} \n
                     Cursor: ${cursor} \n
                      \n
-                    Casos similares previos \n
+                    Previous similar cases \n
                     ======================== \n
                     ${ejemplosTexto} \n
                      \n
-                    Adaptaciones disponibles \n
+                    Available adaptations \n
                     ======================== \n
                     "theme": "light", "dark", "contrast"\n
                     "language": "en", "es"\n
@@ -188,20 +188,20 @@ app.post("/adapt", async (req, res) => {
                     "images": "images", "no_images"\n
                     "cursor": "default", "large", "high-contrast"
                      \n
-                    Siendo lo anterior a ":" area, y lo posterior, valor;
-                    Teniendo en cuenta únicamente la información anterior,
-                    elige varias adaptaciones que aplicar.
-                    esponde EXACTAMENTE con este formato, en dos partes:
+                    The text previous to ":" being "area", and next being "valor";
+                    Keeping in mind only the previous information,
+                    choose various adaptations to apply.
+                    Respond EXACTLY with this format, in two parts:
 
-                    1. Un array JSON con las adaptaciones, sin explicación, sin introducción, sin Markdown. SÓLAMENTE si ves necesario un cambio.
-                    2. A continuación, en una nueva línea que empiece exactamente con "JUSTIFICACION:", tu justificación en texto libre.
+                    1. A JSON array with the adaptations, no explanation, no introduction, no Markdown. ONLY if you see a change is necessary.
+                    2. Next, in a new line starting exactly with "JUSTIFICATION:", your justification in friendly, freeform text.
 
-                    Ejemplo de respuesta:
+                    Response example:
                     [
                         {"area":"theme","valor":"dark"},
                         {"area":"display","valor":"grid3"}
                     ]
-                    JUSTIFICACION: Se aplica tema oscuro porque es de noche y el usuario...
+                    JUSTIFICATION: I applied a dark theme because it's the nighttime and the user...
                     `;
 
     let adaptaciones = [];
@@ -247,7 +247,7 @@ app.post("/adapt", async (req, res) => {
     try {
         const result = await model.generateContent(prompt);
         const raw = result.response.text().trim();
-        console.log("Respuesta de Gemini:", raw);
+        console.log("Gemini's response:", raw);
 
         // Separa el bloque JSON del bloque de justificación
         const marcador = raw.indexOf("JUSTIFICACION:");
@@ -300,7 +300,7 @@ app.post("/confirmar", async (req, res) => {
         return res.status(400).json({ error: "Faltan datos: contexto o adaptaciones" });
     }
 
-    console.log("Guardando adaptación confirmada:");
+    console.log("Saving confirmed adaptations:");
     console.log(adaptaciones);
 
     const registro = {
@@ -326,5 +326,5 @@ app.post("/confirmar", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Abierto servidor RAG en el puerto ${PORT}`)
+    console.log(`RAG server opened at port ${PORT}`)
 })
