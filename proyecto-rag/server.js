@@ -11,7 +11,7 @@ const ADAPTACIONES_FALLBACK = [
     { area: "theme", valor: "light" },
     { area: "font_size", valor: "default" }
 ];
-const JUSTIFICACION_FALLBACK = "No se pudo consultar el modelo de IA en este momento, se han aplicado las adaptaciones estándar.";
+const JUSTIFICACION_FALLBACK = "The AI model could not be accessed right now. Applying standard adaptations.";
 
 dotenv.config();
 
