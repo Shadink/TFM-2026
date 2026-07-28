@@ -45,6 +45,7 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
             clicks: "init", scroll_up: "init", scroll_down: "init", path: "init",
             window_height: "init", window_width: "init",
             accion: "init",
+            justificacion: "init",
             embedding: new Array(DIM_EMBEDDING).fill(0)
         }
     ]);
@@ -145,7 +146,8 @@ app.post("/adapt", async (req, res) => {
     const ejemplosTexto = casosSimilares.length > 0
         ? casosSimilares.map((c, i) =>
             `Caso ${i + 1} (usuario similar: edad ${c.contexto.edad}, ubicación ${c.contexto.ubicacion}, SO ${c.contexto.so}, idioma ${c.contexto.lang}):
-            Adaptaciones aplicadas: ${JSON.stringify(c.adaptaciones)}`
+            Adaptaciones aplicadas: ${JSON.stringify(c.adaptaciones)};
+            Justificacion: ${c.justificacion}`
           ).join("\n\n")
         : "No hay casos previos similares registrados.";
 
@@ -310,7 +312,8 @@ app.post("/confirmar", async (req, res) => {
         nombre: contexto.nombre ?? "", edad: contexto.edad ?? "", ubicacion: contexto.ubicacion ?? "",
         fecha: contexto.fecha ?? "", hora: contexto.hora ?? "", so: contexto.so ?? "",
         ram: contexto.ram ?? "", lang: contexto.lang ?? "",
-        accion: JSON.stringify(adaptaciones)
+        accion: JSON.stringify(adaptaciones),
+        justificacion: justificacion
     };
 
     try {
