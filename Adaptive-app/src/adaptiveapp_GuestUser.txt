@@ -30,7 +30,7 @@
     },
     "currentAdaptations": {
       "theme": "dark",
-      "language": "en",
+      "language": "es",
       "display": "list",
       "font_size": "small",
       "information": "show",
