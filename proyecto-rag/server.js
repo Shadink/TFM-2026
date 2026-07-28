@@ -252,7 +252,7 @@ app.post("/adapt", async (req, res) => {
         // Separa el bloque JSON del bloque de justificación
         const marcador = raw.indexOf("JUSTIFICACION:");
         const bloqueJson = marcador !== -1 ? raw.slice(0, marcador) : raw;
-        justificacion = marcador !== -1 ? raw.slice(marcador + "JUSTIFICACION:".length).trim() : "";
+        justificacion = marcador !== -1 ? raw.slice(marcador + "JUSTIFICATION:".length).trim() : "";
 
         let cleaned = bloqueJson.replace(/^```json\s*|```$/g, "").trim();
 
