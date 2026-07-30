@@ -268,7 +268,7 @@ app.post("/adapt", async (req, res) => {
 
         adaptaciones = Array.isArray(parsed) ? parsed : [parsed];
         adaptaciones = adaptaciones.filter(a => a && a.area && a.valor);
-        if (adaptaciones.length === 0) throw new Error("Array vacío o inválido");
+        if (result.length === 0) throw new Error("Array vacío o inválido");
     } catch (err) {
         console.error("Error al llamar/parsear respuesta de Gemini:", err);
         console.warn("Aplicando adaptaciones estándar de fallback");
