@@ -268,7 +268,6 @@ app.post("/adapt", async (req, res) => {
 
         adaptaciones = Array.isArray(parsed) ? parsed : [parsed];
         adaptaciones = adaptaciones.filter(a => a && a.area && a.valor);
-        if (result.length === 0) throw new Error("Array vacío o inválido");
     } catch (err) {
         console.error("Error al llamar/parsear respuesta de Gemini:", err);
         console.warn("Aplicando adaptaciones estándar de fallback");
@@ -296,7 +295,7 @@ app.post("/adapt", async (req, res) => {
 });
 
 app.post("/confirmar", async (req, res) => {
-    const { contexto, adaptaciones } = req.body;
+    const { contexto, adaptaciones, justificacion } = req.body;
 
     if (!contexto || !Array.isArray(adaptaciones) || adaptaciones.length === 0) {
         return res.status(400).json({ error: "Faltan datos: contexto o adaptaciones" });
@@ -307,13 +306,15 @@ app.post("/confirmar", async (req, res) => {
 
     const registro = {
         id: randomUUID(),
-        display: contexto.display ?? "", theme: contexto.theme ?? "", information: contexto.information ?? "",
-        font_size: contexto.font_size ?? "", menu_type: contexto.menu_type ?? "", images: contexto.images ?? "",
+        theme: contexto.theme ?? "", language: contexto.language ?? "", display: contexto.display ?? "",
+        font_size: contexto.font_size ?? "", information: contexto.information ?? "",
+        category: contexto.category ?? "", menu_type: contexto.menu_type ?? "",
+        images: contexto.images ?? "", cursor: contexto.cursor ?? "",
         nombre: contexto.nombre ?? "", edad: contexto.edad ?? "", ubicacion: contexto.ubicacion ?? "",
         fecha: contexto.fecha ?? "", hora: contexto.hora ?? "", so: contexto.so ?? "",
         ram: contexto.ram ?? "", lang: contexto.lang ?? "",
         accion: JSON.stringify(adaptaciones),
-        justificacion: justificacion
+        justificacion: justificacion ?? ""
     };
 
     try {
