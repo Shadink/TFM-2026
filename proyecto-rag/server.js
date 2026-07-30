@@ -252,7 +252,7 @@ app.post("/adapt", async (req, res) => {
         console.log("Gemini's response:", raw);
 
         // Separa el bloque JSON del bloque de justificación
-        const marcador = raw.indexOf("JUSTIFICACION:");
+        const marcador = raw.indexOf("JUSTIFICATION:");
         const bloqueJson = marcador !== -1 ? raw.slice(0, marcador) : raw;
         justificacion = marcador !== -1 ? raw.slice(marcador + "JUSTIFICATION:".length).trim() : "";
 
