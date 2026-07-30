@@ -133,6 +133,7 @@ app.post("/adapt", async (req, res) => {
                         },
                         adaptaciones: JSON.parse(r.accion),
                         distancia: r._distance
+                        justificacion: r.justificacion
                     };
                 } catch {
                     return null;
