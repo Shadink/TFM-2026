@@ -24,7 +24,7 @@ app.use(express.json())
 
 // ===== GESTIÓN DE LA TABLA RAG =====
 const dbConn = await lancedb.connect("./rag-db");
-const NOMBRE_TABLA = "adaptations";
+const NOMBRE_TABLA = "adaptations_and_context";
 const DIM_EMBEDDING = 384; // all-MiniLM-L6-v2
 
 const tablasExistentes = await dbConn.tableNames();
