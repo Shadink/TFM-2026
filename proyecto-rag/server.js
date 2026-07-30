@@ -132,7 +132,7 @@ app.post("/adapt", async (req, res) => {
                             edad: r.edad, ubicacion: r.ubicacion, so: r.so, lang: r.lang
                         },
                         adaptaciones: JSON.parse(r.accion),
-                        distancia: r._distance
+                        distancia: r._distance,
                         justificacion: r.justificacion
                     };
                 } catch {
