@@ -67,8 +67,15 @@ function construirTexto(c, contexto = true) {
         theme:${c.theme} language:${c.language} display:${c.display} font_size:${c.font_size} information:${c.information}
         category:${c.category} menu_type:${c.menu_type} images:${c.images} cursor:${c.cursor}
         nombre:${c.nombre} edad:${c.edad} ubicacion:${c.ubicacion}
-        fecha:${c.fecha} hora:${c.hora} so:${c.so} ram:${c.ram} lang:${c.lang}
+        fecha:${c.fecha} hora:${c.hora} so:${c.so} ram:${c.ram} lang:${c.lang} alarma:${c.alarma}
     `;
+
+    if (contexto) {
+        texto = `acción:${c.accion}\n` + texto;
+    }
+
+    return texto.trim();
+}
 
     if (contexto) {
         texto = `acción:${c.accion}\n` + texto;
@@ -105,12 +112,12 @@ app.post("/adapt", async (req, res) => {
 
     const {
         theme, language, display, font_size, information, category, menu_type, images, cursor,
-        nombre, edad, ubicacion, fecha, hora, so, ram, lang
+        nombre, edad, ubicacion, fecha, hora, so, ram, lang, alarma
     } = req.body;
 
     const contextoActual = {
         theme, language, display, font_size, information, category, menu_type, images, cursor,
-        nombre, edad, ubicacion, fecha, hora, so, ram, lang
+        nombre, edad, ubicacion, fecha, hora, so, ram, lang, alarma
     };
 
     const textoConsulta = construirTexto(contextoActual, false);
@@ -314,6 +321,7 @@ app.post("/confirmar", async (req, res) => {
         nombre: contexto.nombre ?? "", edad: contexto.edad ?? "", ubicacion: contexto.ubicacion ?? "",
         fecha: contexto.fecha ?? "", hora: contexto.hora ?? "", so: contexto.so ?? "",
         ram: contexto.ram ?? "", lang: contexto.lang ?? "",
+        alarma: contexto.alarma ?? "",
         accion: JSON.stringify(adaptaciones),
         justificacion: justificacion ?? ""
     };
