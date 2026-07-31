@@ -24,7 +24,7 @@ app.use(express.json())
 
 // ===== GESTIÓN DE LA TABLA RAG =====
 const dbConn = await lancedb.connect("./rag-db");
-const NOMBRE_TABLA = "adaptations_and_context";
+const NOMBRE_TABLA = "adaptations_and_context_with_alarm";
 const DIM_EMBEDDING = 384; // all-MiniLM-L6-v2
 
 const tablasExistentes = await dbConn.tableNames();
@@ -69,13 +69,6 @@ function construirTexto(c, contexto = true) {
         nombre:${c.nombre} edad:${c.edad} ubicacion:${c.ubicacion}
         fecha:${c.fecha} hora:${c.hora} so:${c.so} ram:${c.ram} lang:${c.lang} alarma:${c.alarma}
     `;
-
-    if (contexto) {
-        texto = `acción:${c.accion}\n` + texto;
-    }
-
-    return texto.trim();
-}
 
     if (contexto) {
         texto = `acción:${c.accion}\n` + texto;
