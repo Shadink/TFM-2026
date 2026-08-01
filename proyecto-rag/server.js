@@ -24,7 +24,7 @@ app.use(express.json())
 
 // ===== GESTIÓN DE LA TABLA RAG =====
 const dbConn = await lancedb.connect("./rag-db");
-const NOMBRE_TABLA = "adaptations_and_context_with_alarm";
+const NOMBRE_TABLA = "new_adaptations";
 const DIM_EMBEDDING = 384; // all-MiniLM-L6-v2
 
 const tablasExistentes = await dbConn.tableNames();
@@ -163,6 +163,13 @@ app.post("/adapt", async (req, res) => {
                     RAM: ${ram}MB \n
                     Language: ${lang} \n
                      \n
+                    
+                    In a total of ${alarma} seconds there were:\n
+                    ${clicks} clicks \n
+                    ${scroll_down} scrolls down\n
+                    ${scroll_up} scrolls up\n
+                    And currently in the path ${path} with window height ${window_height} and width ${window_width}
+                    
                     Current Interface \n
                     =============== \n
                     Theme: ${theme} \n
@@ -314,6 +321,8 @@ app.post("/confirmar", async (req, res) => {
         nombre: contexto.nombre ?? "", edad: contexto.edad ?? "", ubicacion: contexto.ubicacion ?? "",
         fecha: contexto.fecha ?? "", hora: contexto.hora ?? "", so: contexto.so ?? "",
         ram: contexto.ram ?? "", lang: contexto.lang ?? "",
+        clicks: contexto.clicks ?? "", scroll_up: contexto.scroll_up ?? "", scroll_down: contexto.scroll_down ?? "",
+        path: contexto.path ?? "", window_height: contexto.window_height ?? "", window_width: contexto.window_width ?? "",
         alarma: contexto.alarma ?? "",
         accion: JSON.stringify(adaptaciones),
         justificacion: justificacion ?? ""
