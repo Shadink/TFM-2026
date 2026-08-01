@@ -284,8 +284,8 @@ app.post("/adapt", async (req, res) => {
             model: "openai/gpt-4o",
             messages: [{ role: "user", content: prompt }],
         });*/
-        //const raw = result.response.text().trim();
-        const raw = result.choices[0].message.content.trim();
+        const raw = result.response.text().trim();
+        //const raw = result.choices[0].message.content.trim();
         //console.log("Gemini's response:", raw);
         console.log("GPT-5.6's response:", raw);
 
