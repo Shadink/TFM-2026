@@ -24,7 +24,7 @@ app.use(express.json())
 
 // ===== GESTIÓN DE LA TABLA RAG =====
 const dbConn = await lancedb.connect("./rag-db");
-const NOMBRE_TABLA = "new_adaptations";
+const NOMBRE_TABLA = "new_adaptations_v2";
 const DIM_EMBEDDING = 384; // all-MiniLM-L6-v2
 
 const tablasExistentes = await dbConn.tableNames();
@@ -42,6 +42,7 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
             category: "init", menu_type: "init", images: "init", cursor: "init",
             nombre: "init", edad: "init", ubicacion: "init",
             fecha: "init", hora: "init", so: "init", ram: "init", lang: "init",
+            alarma: "init",
             clicks: "init", scroll_up: "init", scroll_down: "init", path: "init",
             window_height: "init", window_width: "init",
             accion: "init",
