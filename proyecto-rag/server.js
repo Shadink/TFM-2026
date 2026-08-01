@@ -105,12 +105,14 @@ app.post("/adapt", async (req, res) => {
 
     const {
         theme, language, display, font_size, information, category, menu_type, images, cursor,
-        nombre, edad, ubicacion, fecha, hora, so, ram, lang, alarma
+        nombre, edad, ubicacion, fecha, hora, so, ram, lang, alarma,
+        clicks, scroll_up, scroll_down, path, window_height, window_width
     } = req.body;
 
     const contextoActual = {
         theme, language, display, font_size, information, category, menu_type, images, cursor,
-        nombre, edad, ubicacion, fecha, hora, so, ram, lang, alarma
+        nombre, edad, ubicacion, fecha, hora, so, ram, lang, alarma,
+        clicks, scroll_up, scroll_down, path, window_height, window_width
     };
 
     const textoConsulta = construirTexto(contextoActual, false);
