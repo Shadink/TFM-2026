@@ -1,11 +1,11 @@
 import express from "express"
 import * as lancedb from "@lancedb/lancedb"
 import { pipeline } from '@xenova/transformers';
-//import OpenAI from 'openai'
+import OpenAI from 'openai'
 import dotenv from "dotenv";
 import cors from "cors"
 import { randomUUID } from "crypto";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+//import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const ADAPTACIONES_FALLBACK = [
     { area: "theme", valor: "light" },
@@ -55,8 +55,12 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
 
 const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
 //const generator = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-77M');
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+//const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+//const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+const client = new OpenAI({
+    baseURL: "https://models.github.ai/inference",
+    apiKey: process.env.GITHUB_TOKEN,
+});
 
 async function embed(text){
     const output = await extractor(text, { pooling: 'mean', normalize: true });
@@ -258,9 +262,15 @@ app.post("/adapt", async (req, res) => {
         return res.status(502).json({ error: "No se pudo obtener una adaptación válida del modelo" });
     }*/
     try {
-        const result = await model.generateContent(prompt);
-        const raw = result.response.text().trim();
-        console.log("Gemini's response:", raw);
+        //const result = await model.generateContent(prompt);
+        const result = await client.chat.completions.create({
+            model: "openai/gpt-4o",
+            messages: [{ role: "user", content: prompt }],
+        });
+        //const raw = result.response.text().trim();
+        const raw = result.choices[0].message.content.trim();
+        //console.log("Gemini's response:", raw);
+        console.log("GPT-4o's response:", raw);
 
         // Separa el bloque JSON del bloque de justificación
         const marcador = raw.indexOf("JUSTIFICATION:");
