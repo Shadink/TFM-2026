@@ -265,7 +265,7 @@ app.post("/adapt", async (req, res) => {
         console.error("Error al llamar/parsear respuesta de llama:", err);
         return res.status(502).json({ error: "No se pudo obtener una adaptación válida del modelo" });
     }*/
-    try {
+    /*try {
         const runner = openai.responses
             .stream({
                 model: deploymentName,
@@ -285,7 +285,7 @@ app.post("/adapt", async (req, res) => {
             messages: [{ role: "user", content: prompt }],
         });*/
         
-        const raw = result.output_text.trim();
+        /*const raw = result.output_text.trim();
         //const raw = result.response.text().trim();
         //const raw = result.choices[0].message.content.trim();
         //console.log("Gemini's response:", raw);
@@ -310,6 +310,38 @@ app.post("/adapt", async (req, res) => {
         adaptaciones = adaptaciones.filter(a => a && a.area && a.valor);
     } catch (err) {
         console.error("Error al llamar/parsear respuesta de Gemini:", err);
+        console.warn("Aplicando adaptaciones estándar de fallback");
+        adaptaciones = ADAPTACIONES_FALLBACK;
+        justificacion = JUSTIFICACION_FALLBACK;
+    }*/
+    try {
+        const result = await openai.responses.create({
+            model: deploymentName,
+            input: prompt,
+        });
+
+        const raw = result.output_text.trim();
+        console.log("GPT-5.6's response:", raw);
+
+        // Separa el bloque JSON del bloque de justificación
+        const marcador = raw.indexOf("JUSTIFICATION:");
+        const bloqueJson = marcador !== -1 ? raw.slice(0, marcador) : raw;
+        justificacion = marcador !== -1 ? raw.slice(marcador + "JUSTIFICATION:".length).trim() : "";
+
+        let cleaned = bloqueJson.replace(/^```json\s*|```$/g, "").trim();
+
+        const inicio = cleaned.indexOf("[");
+        const fin = cleaned.lastIndexOf("]");
+        if (inicio !== -1 && fin !== -1 && fin > inicio) {
+            cleaned = cleaned.slice(inicio, fin + 1);
+        }
+
+        const parsed = JSON.parse(cleaned);
+
+        adaptaciones = Array.isArray(parsed) ? parsed : [parsed];
+        adaptaciones = adaptaciones.filter(a => a && a.area && a.valor);
+    } catch (err) {
+        console.error("Error al llamar/parsear respuesta de GPT-5.6:", err);
         console.warn("Aplicando adaptaciones estándar de fallback");
         adaptaciones = ADAPTACIONES_FALLBACK;
         justificacion = JUSTIFICACION_FALLBACK;
