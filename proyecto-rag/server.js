@@ -5,6 +5,10 @@ import OpenAI from 'openai'
 import dotenv from "dotenv";
 import cors from "cors"
 import { randomUUID } from "crypto";
+
+const endpoint = "https://tfm-mvr2026-foundry.services.ai.azure.com/openai/v1";
+const deploymentName = "gpt-5.6-sol";
+
 //import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const ADAPTACIONES_FALLBACK = [
@@ -15,10 +19,6 @@ const JUSTIFICACION_FALLBACK = "The AI model could not be accessed right now. Ap
 
 dotenv.config();
 
-/*const openai = new OpenAI({
-    apiKey: 'sk-Q3T-ggr2ZLVOiWPrLaqOVQ',
-    baseURL: 'https://api.poligpt.upv.es',
-})*/
 const app = express()
 app.use(express.json())
 
@@ -57,9 +57,13 @@ const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2'
 //const generator = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-77M');
 //const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 //const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
-const client = new OpenAI({
+/*const client = new OpenAI({
     baseURL: "https://models.github.ai/inference",
     apiKey: process.env.GITHUB_TOKEN,
+});*/
+const openai = new OpenAI({
+    baseURL: endpoint,
+    apiKey: process.env.AZURE_OPENAI_API_KEY
 });
 
 async function embed(text){
@@ -262,15 +266,28 @@ app.post("/adapt", async (req, res) => {
         return res.status(502).json({ error: "No se pudo obtener una adaptación válida del modelo" });
     }*/
     try {
+        const runner = openai.responses
+            .stream({
+                model: deploymentName,
+                input: prompt,
+            })
+            .on('event', (event) => console.log(event))
+            .on('response.output_text.delta', (diff) => process.stdout.write(diff.delta));
+
+        for await (const event of runner) {
+            console.log('event', event);
+        }
+
+        const result = await runner.finalResponse();
         //const result = await model.generateContent(prompt);
-        const result = await client.chat.completions.create({
+        /*const result = await client.chat.completions.create({
             model: "openai/gpt-4o",
             messages: [{ role: "user", content: prompt }],
-        });
+        });*/
         //const raw = result.response.text().trim();
         const raw = result.choices[0].message.content.trim();
         //console.log("Gemini's response:", raw);
-        console.log("GPT-4o's response:", raw);
+        console.log("GPT-5.6's response:", raw);
 
         // Separa el bloque JSON del bloque de justificación
         const marcador = raw.indexOf("JUSTIFICATION:");
