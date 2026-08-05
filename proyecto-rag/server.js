@@ -167,7 +167,7 @@ app.post("/adapt", async (req, res) => {
                     =============== \n
                     Name: ${nombre} \n
                     Age: ${edad} \n
-                    Location: ${ubicacion} \n
+                    Location: ${ubicacion?.lat ?? "unknown"}, ${ubicacion?.lon ?? "unknown"} \n
                     Date: ${fecha} \n
                     Time: ${hora} \n
                     OS: ${so} \n
