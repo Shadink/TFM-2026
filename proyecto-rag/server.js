@@ -75,7 +75,7 @@ function construirTexto(c, contexto = true) {
     let texto = `
         theme:${c.theme} language:${c.language} display:${c.display} font_size:${c.font_size} information:${c.information}
         category:${c.category} menu_type:${c.menu_type} images:${c.images} cursor:${c.cursor}
-        nombre:${c.nombre} edad:${c.edad} ubicacion:${c.ubicacion}
+        nombre:${c.nombre} edad:${c.edad} ubicacion:${c.ciudad}
         fecha:${c.fecha} hora:${c.hora} so:${c.so} ram:${c.ram} lang:${c.lang} alarma:${c.alarma}
     `;
 
@@ -84,6 +84,35 @@ function construirTexto(c, contexto = true) {
     }
 
     return texto.trim();
+}
+
+async function obtenerCiudad(lat, lon) {
+    try {
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`,
+            {
+                headers: {
+                    "User-Agent": "AdaptiveSports/1.0 (TFM)"
+                }
+            }
+        );
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+
+        return (
+            data.address.city ||
+            data.address.town ||
+            data.address.village ||
+            data.address.municipality ||
+            data.address.county ||
+            "Unknown"
+        );
+    } catch (err) {
+        console.error("Error obteniendo ciudad:", err.message);
+        return "Unknown";
+    }
 }
 
 app.use(cors({ origin: "*" }))
@@ -118,9 +147,13 @@ app.post("/adapt", async (req, res) => {
         clicks, scroll_up, scroll_down, path, window_height, window_width
     } = req.body;
 
+    const ciudad = ubicacion
+        ? await obtenerCiudad(ubicacion.lat, ubicacion.lon)
+        : "Unknown";
+
     const contextoActual = {
         theme, language, display, font_size, information, category, menu_type, images, cursor,
-        nombre, edad, ubicacion, fecha, hora, so, ram, lang, alarma,
+        nombre, edad, ciudad, fecha, hora, so, ram, lang, alarma,
         clicks, scroll_up, scroll_down, path, window_height, window_width
     };
 
@@ -167,7 +200,7 @@ app.post("/adapt", async (req, res) => {
                     =============== \n
                     Name: ${nombre} \n
                     Age: ${edad} \n
-                    Location: ${ubicacion?.lat ?? "unknown"}, ${ubicacion?.lon ?? "unknown"} \n
+                    Location: ${ciudad} \n
                     Date: ${fecha} \n
                     Time: ${hora} \n
                     OS: ${so} \n
