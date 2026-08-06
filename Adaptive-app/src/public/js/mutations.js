@@ -158,7 +158,7 @@ class MutationController {
     loadDefaults() {
         this.mutations = {
             theme: 'light',
-            language: 'es',
+            language: 'en',
             display: 'list',
             font_size: "default",
             information: "show",
