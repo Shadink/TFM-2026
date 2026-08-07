@@ -24,7 +24,7 @@ app.use(express.json())
 
 // ===== GESTIÓN DE LA TABLA RAG =====
 const dbConn = await lancedb.connect("./rag-db");
-const NOMBRE_TABLA = "new_adaptations_v2";
+const NOMBRE_TABLA = "new_adaptations_v3";
 const DIM_EMBEDDING = 384; // all-MiniLM-L6-v2
 
 const tablasExistentes = await dbConn.tableNames();
@@ -42,6 +42,7 @@ if (tablasExistentes.includes(NOMBRE_TABLA)) {
             category: "init", menu_type: "init", images: "init", cursor: "init",
             nombre: "init", edad: "init", ubicacion: "init",
             fecha: "init", hora: "init", so: "init", ram: "init", lang: "init",
+            condicion: "init",
             alarma: "init",
             clicks: "init", scroll_up: "init", scroll_down: "init", path: "init",
             window_height: "init", window_width: "init",
@@ -76,7 +77,7 @@ function construirTexto(c, contexto = true) {
         theme:${c.theme} language:${c.language} display:${c.display} font_size:${c.font_size} information:${c.information}
         category:${c.category} menu_type:${c.menu_type} images:${c.images} cursor:${c.cursor}
         nombre:${c.nombre} edad:${c.edad} ubicacion:${c.ciudad}
-        fecha:${c.fecha} hora:${c.hora} so:${c.so} ram:${c.ram} lang:${c.lang} alarma:${c.alarma}
+        fecha:${c.fecha} hora:${c.hora} so:${c.so} ram:${c.ram} lang:${c.lang} condicion: ${c.condicion} alarma:${c.alarma}
     `;
 
     if (contexto) {
@@ -143,7 +144,7 @@ app.post("/adapt", async (req, res) => {
 
     const {
         theme, language, display, font_size, information, category, menu_type, images, cursor,
-        nombre, edad, ubicacion, fecha, hora, so, ram, lang, alarma,
+        nombre, edad, ubicacion, fecha, hora, so, ram, lang, condicion, alarma,
         clicks, scroll_up, scroll_down, path, window_height, window_width
     } = req.body;
 
@@ -153,7 +154,7 @@ app.post("/adapt", async (req, res) => {
 
     const contextoActual = {
         theme, language, display, font_size, information, category, menu_type, images, cursor,
-        nombre, edad, ciudad, fecha, hora, so, ram, lang, alarma,
+        nombre, edad, ciudad, fecha, hora, so, ram, lang, condicion, alarma,
         clicks, scroll_up, scroll_down, path, window_height, window_width
     };
 
@@ -206,6 +207,7 @@ app.post("/adapt", async (req, res) => {
                     OS: ${so} \n
                     RAM: ${ram}MB \n
                     Language: ${lang} \n
+                    Condition: ${condicion} \n
                      \n
                     
                     In a total of ${alarma} seconds there were:\n
@@ -418,6 +420,7 @@ app.post("/confirmar", async (req, res) => {
         nombre: contexto.nombre ?? "", edad: contexto.edad ?? "", ubicacion: contexto.ubicacion ?? "",
         fecha: contexto.fecha ?? "", hora: contexto.hora ?? "", so: contexto.so ?? "",
         ram: contexto.ram ?? "", lang: contexto.lang ?? "",
+        condicion: contexto.condicion ?? "",
         clicks: contexto.clicks ?? "", scroll_up: contexto.scroll_up ?? "", scroll_down: contexto.scroll_down ?? "",
         path: contexto.path ?? "", window_height: contexto.window_height ?? "", window_width: contexto.window_width ?? "",
         alarma: contexto.alarma ?? "",
