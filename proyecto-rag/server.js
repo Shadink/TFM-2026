@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 import cors from "cors"
 import { randomUUID } from "crypto";
 
-const endpoint = "https://tfm-mvr2026-foundry.services.ai.azure.com/openai/v1";
 const deploymentName = "gpt-5.6-sol";
 
 //import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -63,7 +62,7 @@ const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2'
     apiKey: process.env.GITHUB_TOKEN,
 });*/
 const openai = new OpenAI({
-    baseURL: endpoint,
+    baseURL: process.env.AZURE_ENDPOINT,
     apiKey: process.env.AZURE_OPENAI_API_KEY
 });
 
