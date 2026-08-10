@@ -7,7 +7,7 @@ import cors from "cors"
 import { randomUUID } from "crypto";
 
 const endpoint = "https://tfm-mvr2026-foundry.services.ai.azure.com/openai/v1";
-const deploymentName = "gpt-5.6-terra";
+const deploymentName = "Kimi-K2.6";
 
 //import { GoogleGenerativeAI } from "@google/generative-ai";
 
